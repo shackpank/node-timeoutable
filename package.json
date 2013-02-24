@@ -1,0 +1,27 @@
+{
+  "name": "timeoutable",
+  "version": "0.0.0",
+  "description": "Wrap timeouts around anything, to fail fast and/or keep user-facing code responsive.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "~1.8.1",
+    "coffee-script": "~1.4.0",
+    "sinon": "~1.6.0"
+  },
+  "scripts": {
+    "test": "mocha -r coffee-script test/*.coffee"
+  },
+  "repository": "",
+  "keywords": [
+    "timeout",
+    "speed",
+    "fail fast"
+  ],
+  "author": "Ollie Buck <node@olliebuck.com>",
+  "license": "BSD",
+  "readmeFilename": "README.md"
+}
