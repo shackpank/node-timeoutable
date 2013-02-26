@@ -1,7 +1,7 @@
 Timeoutable
------------
+===========
 
-A lightweight module written around the node callback-as-last-argument pattern, that interrupts if something is slow to respond.
+A lightweight (no dependencies) module written around the node callback-as-last-argument pattern, that interrupts if something is slow to respond.
 
 What's this for?
 ----------------
@@ -75,9 +75,32 @@ If the timeoutable thing is a property of an instance of a "class", you need to 
 Bonus features
 ---------
 
-This module absorbs things that might normally cause errors (example: callback being called multiple times, & the callback calls res.send); it tracks them, but doesn't complain unless you configure it to. (I need to add a bit more detail to this.)
+Timeoutable absorbs things that might normally cause errors (eg: express app, callback being called multiple times, & the callback calls res.send, that would throw); it tracks them, but how loudly it complains is configurable. The default behaviour is:
 
-Yeah, also
------
+  - in development, throw immediately if a callback is called multiple times (1)
+  - in development, throw if 50 callbacks haven't been called (2)
+  - otherwise, don't throw unless you tell it to by reconfiguring upper limits
 
-Wrote this on a Sunday evening. Please open an issue, or a pull request, if you have ideas for improvements!
+This is assuming you set the NODE_ENV environment variable to something (if you don't, everything is in development).
+
+### Callbacks that callback and callback and callback and ca.. (1) ###
+
+This is bad.
+
+If you're using callbacks for control flow, as most node applications do, you'll repeat actions that you probably only meant to happen once. All it takes is missing out a `return;`
+
+If you actually mean to call the same callback multiple times, an [EventEmitter](http://nodejs.org/api/events.html#events_class_events_eventemitter) is almost certainly the better choice.
+
+Timeoutable prevents that bad thing happening, at the risk of making things incredibly difficult to debug; so in development it will complain very quickly about it.
+
+Change the threshold with `timeoutable.maxMultipleCallbacks = ...`
+
+### Callbacks that don't. (2) ###
+
+This is bad.
+
+You're almost definitely leaking memory. Probably not a lot, but it'll build up.
+
+Timeoutable has quite a low crashing threshold in development, so hopefully if you are just leaving unresolved callbacks sitting around, it'll throw after an hour or so and you can figure out the problem.
+
+Change the threshold with `timeoutable.maxOrphanedCallbacks = ...`
